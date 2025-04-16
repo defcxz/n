@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import {
     Card,
     CardContent,
@@ -41,8 +42,34 @@ export default function Dashboard() {
             ponderación: [0.2, 0.5, 0.3],
         },
     ]);
+
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <DashboardContent />
+        </Suspense>
+    );
+}
+
+function DashboardContent() {
     const searchParams = useSearchParams();
     const username = searchParams.get("username");
+    const [asignatura, setAsignatura] = useState("");
+    const [nota, setNota] = useState<string>("");
+    const [ponderacion, setPonderacion] = useState<string>("");
+    const [notasTemp, setNotasTemp] = useState<number[]>([]);
+    const [ponderacionesTemp, setPonderacionesTemp] = useState<number[]>([]);
+    const [asignaturas, setAsignaturas] = useState([
+        {
+            nombre: "Matemáticas",
+            notas: [5, 6, 7],
+            ponderación: [0.3, 0.3, 0.4],
+        },
+        {
+            nombre: "Lengua",
+            notas: [4.5, 5.2, 2],
+            ponderación: [0.2, 0.5, 0.3],
+        },
+    ]);
 
     const handleAddNota = () => {
         if (nota === "") return;
