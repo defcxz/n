@@ -26,7 +26,6 @@ interface Asignatura {
   id: string
   nombre: string
   profesor: string
-  creditos: number
   notas: Nota[]
   color: string
   objetivos?: Objetivo[]
@@ -67,7 +66,7 @@ export default function ObjetivosAsignatura({ asignatura, onUpdate }: ObjetivosA
   const mediaPonderada = calcularMediaPonderada()
 
   // Añadir un nuevo objetivo
-  const añadirObjetivo = () => {
+  const anadirObjetivo = () => {
     if (!nuevoObjetivo.descripcion) return
 
     const objetivoNuevo: Objetivo = {
@@ -189,7 +188,7 @@ export default function ObjetivosAsignatura({ asignatura, onUpdate }: ObjetivosA
             </div>
           </CardContent>
           <CardFooter>
-            <Button onClick={añadirObjetivo} disabled={!nuevoObjetivo.descripcion}>
+            <Button onClick={anadirObjetivo} disabled={!nuevoObjetivo.descripcion}>
               <PlusCircle className="h-4 w-4 mr-2" />
               Añadir Objetivo
             </Button>

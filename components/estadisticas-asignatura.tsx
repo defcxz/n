@@ -16,7 +16,6 @@ interface Asignatura {
   id: string
   nombre: string
   profesor: string
-  creditos: number
   notas: Nota[]
   color: string
 }
@@ -266,7 +265,7 @@ export default function EstadisticasAsignatura({ asignatura }: EstadisticasAsign
               ) : (
                 <div className="space-y-4">
                   <div className="h-60 flex items-end justify-between gap-2">
-                    {asignatura.notas.map((nota, index) => (
+                    {asignatura.notas.map((nota) => (
                       <div key={nota.id} className="flex flex-col items-center">
                         <div
                           className="w-10 rounded-t-md"

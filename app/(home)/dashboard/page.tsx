@@ -25,24 +25,6 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 export default function Dashboard() {
-    const [asignatura, setAsignatura] = useState("");
-    const [nota, setNota] = useState<string>("");
-    const [ponderacion, setPonderacion] = useState<string>("");
-    const [notasTemp, setNotasTemp] = useState<number[]>([]);
-    const [ponderacionesTemp, setPonderacionesTemp] = useState<number[]>([]);
-    const [asignaturas, setAsignaturas] = useState([
-        {
-            nombre: "Matemáticas",
-            notas: [5, 6, 7],
-            ponderación: [0.3, 0.3, 0.4],
-        },
-        {
-            nombre: "Lengua",
-            notas: [4.5, 5.2, 2],
-            ponderación: [0.2, 0.5, 0.3],
-        },
-    ]);
-
     return (
         <Suspense fallback={<div>Cargando...</div>}>
             <DashboardContent />
@@ -62,12 +44,12 @@ function DashboardContent() {
         {
             nombre: "Matemáticas",
             notas: [5, 6, 7],
-            ponderación: [0.3, 0.3, 0.4],
+            ponderacion: [0.3, 0.3, 0.4],
         },
         {
             nombre: "Lengua",
             notas: [4.5, 5.2, 2],
-            ponderación: [0.2, 0.5, 0.3],
+            ponderacion: [0.2, 0.5, 0.3],
         },
     ]);
 
@@ -109,7 +91,7 @@ function DashboardContent() {
         const newAsignatura = {
             nombre: asignatura,
             notas: notasTemp,
-            ponderación: ponderacionesTemp,
+            ponderacion: ponderacionesTemp,
         };
         
         setAsignaturas([...asignaturas, newAsignatura]);
@@ -148,10 +130,10 @@ function DashboardContent() {
                                 <TableRow key={index}>
                                     <TableCell>{asignatura.nombre}</TableCell>
                                     <TableCell>{asignatura.notas.join(", ")}</TableCell>
-                                    <TableCell>{asignatura.ponderación.join(", ")}</TableCell>
+                                    <TableCell>{asignatura.ponderacion.join(", ")}</TableCell>
                                     <TableCell>
                                         {asignatura.notas
-                                            .map((nota, i) => nota * asignatura.ponderación[i])
+                                            .map((nota, i) => nota * asignatura.ponderacion[i])
                                             .reduce((a, b) => a + b, 0)
                                             .toFixed(2)}
                                     </TableCell>
@@ -219,7 +201,6 @@ function DashboardContent() {
                             Añadir Asignatura
                         </Button>
                     </form>
-
                 </CardFooter>
             </Card>
 

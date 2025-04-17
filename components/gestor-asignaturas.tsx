@@ -33,7 +33,6 @@ interface Asignatura {
   id: string
   nombre: string
   profesor: string
-  creditos: number
   notas: Nota[]
   color: string
 }
@@ -45,14 +44,13 @@ export default function GestorAsignaturas() {
   const [nuevaAsignatura, setNuevaAsignatura] = useState<Omit<Asignatura, "id" | "notas">>({
     nombre: "",
     profesor: "",
-    creditos: 6,
     color: generarColorAleatorio(),
   })
   const [editandoAsignatura, setEditandoAsignatura] = useState<string | null>(null)
   const [nuevaNota, setNuevaNota] = useState<Omit<Nota, "id">>({
     nombre: "",
-    valor: 0,
-    ponderacion: 0,
+    valor: NaN, // Cambiar a NaN para manejar valores vacíos
+    ponderacion: NaN, // Cambiar a NaN para manejar valores vacíos
   })
   const [asignaturaSeleccionadaParaNota, setAsignaturaSeleccionadaParaNota] = useState<string | null>(null)
   const [editandoNota, setEditandoNota] = useState<string | null>(null)
@@ -60,6 +58,8 @@ export default function GestorAsignaturas() {
   const [asignaturaEstadisticas, setAsignaturaEstadisticas] = useState<string | null>(null)
   const [dialogoObjetivosAbierto, setDialogoObjetivosAbierto] = useState(false)
   const [asignaturaObjetivos, setAsignaturaObjetivos] = useState<string | null>(null)
+  const [dialogoNuevaAsignaturaAbierto, setDialogoNuevaAsignaturaAbierto] = useState(false)
+  const [dialogoNuevaNotaAbierto, setDialogoNuevaNotaAbierto] = useState(false)
 
   // Cargar datos del localStorage al iniciar
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function GestorAsignaturas() {
   }
 
   // Función para añadir una nueva asignatura
-  function añadirAsignatura() {
+  function anadirAsignatura() {
     if (!nuevaAsignatura.nombre) return
 
     const nuevaAsignaturaCompleta: Asignatura = {
@@ -102,10 +102,10 @@ export default function GestorAsignaturas() {
     setNuevaAsignatura({
       nombre: "",
       profesor: "",
-      creditos: 6,
       color: generarColorAleatorio(),
     })
     setActiveTab(nuevaAsignaturaCompleta.id)
+    setDialogoNuevaAsignaturaAbierto(false) // Cerrar el diálogo
   }
 
   // Función para editar una asignatura
@@ -117,7 +117,6 @@ export default function GestorAsignaturas() {
             ...asignatura,
             nombre: nuevaAsignatura.nombre || asignatura.nombre,
             profesor: nuevaAsignatura.profesor || asignatura.profesor,
-            creditos: nuevaAsignatura.creditos || asignatura.creditos,
             color: nuevaAsignatura.color || asignatura.color,
           }
         }
@@ -128,7 +127,6 @@ export default function GestorAsignaturas() {
     setNuevaAsignatura({
       nombre: "",
       profesor: "",
-      creditos: 6,
       color: generarColorAleatorio(),
     })
   }
@@ -140,7 +138,7 @@ export default function GestorAsignaturas() {
   }
 
   // Función para añadir una nueva nota
-  function añadirNota() {
+  function anadirNota() {
     if (!asignaturaSeleccionadaParaNota || !nuevaNota.nombre || nuevaNota.valor < 0 || nuevaNota.ponderacion <= 0)
       return
 
@@ -163,10 +161,11 @@ export default function GestorAsignaturas() {
 
     setNuevaNota({
       nombre: "",
-      valor: 0,
-      ponderacion: 0,
+      valor: NaN, // Cambiar a NaN para manejar valores vacíos
+      ponderacion: NaN, // Cambiar a NaN para manejar valores vacíos
     })
     setAsignaturaSeleccionadaParaNota(null)
+    setDialogoNuevaNotaAbierto(false) // Cerrar el diálogo
   }
 
   // Función para editar una nota
@@ -195,8 +194,8 @@ export default function GestorAsignaturas() {
     setEditandoNota(null)
     setNuevaNota({
       nombre: "",
-      valor: 0,
-      ponderacion: 0,
+      valor: NaN, // Cambiar a NaN para manejar valores vacíos
+      ponderacion: NaN, // Cambiar a NaN para manejar valores vacíos
     })
   }
 
@@ -250,7 +249,6 @@ export default function GestorAsignaturas() {
     setNuevaAsignatura({
       nombre: asignatura.nombre,
       profesor: asignatura.profesor,
-      creditos: asignatura.creditos,
       color: asignatura.color,
     })
   }
@@ -291,9 +289,9 @@ export default function GestorAsignaturas() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <Dialog>
+          <Dialog open={dialogoNuevaAsignaturaAbierto} onOpenChange={setDialogoNuevaAsignaturaAbierto}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => setDialogoNuevaAsignaturaAbierto(true)}>
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Nueva Asignatura
               </Button>
@@ -327,19 +325,6 @@ export default function GestorAsignaturas() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="creditos" className="text-right">
-                    Créditos
-                  </Label>
-                  <Input
-                    id="creditos"
-                    type="number"
-                    min="1"
-                    value={nuevaAsignatura.creditos}
-                    onChange={(e) => setNuevaAsignatura({ ...nuevaAsignatura, creditos: Number(e.target.value) })}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="color" className="text-right">
                     Color
                   </Label>
@@ -356,7 +341,7 @@ export default function GestorAsignaturas() {
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={añadirAsignatura}>Añadir Asignatura</Button>
+                <Button onClick={anadirAsignatura}>Añadir Asignatura</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -374,7 +359,7 @@ export default function GestorAsignaturas() {
                   <CardHeader>
                     <CardTitle>{asignatura.nombre}</CardTitle>
                     <CardDescription>
-                      Profesor: {asignatura.profesor} • {asignatura.creditos} créditos
+                      Profesor: {asignatura.profesor}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -498,22 +483,6 @@ export default function GestorAsignaturas() {
                             <p className="text-sm mt-1">{asignatura.profesor}</p>
                           )}
                         </div>
-                        <div>
-                          <Label>Créditos</Label>
-                          {editandoAsignatura === asignatura.id ? (
-                            <Input
-                              type="number"
-                              min="1"
-                              value={nuevaAsignatura.creditos}
-                              onChange={(e) =>
-                                setNuevaAsignatura({ ...nuevaAsignatura, creditos: Number(e.target.value) })
-                              }
-                              className="mt-1"
-                            />
-                          ) : (
-                            <p className="text-sm mt-1">{asignatura.creditos}</p>
-                          )}
-                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -547,12 +516,15 @@ export default function GestorAsignaturas() {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <h3 className="text-lg font-medium">Notas</h3>
-                        <Dialog>
+                        <Dialog open={dialogoNuevaNotaAbierto} onOpenChange={setDialogoNuevaNotaAbierto}>
                           <DialogTrigger asChild>
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => setAsignaturaSeleccionadaParaNota(asignatura.id)}
+                              onClick={() => {
+                                setAsignaturaSeleccionadaParaNota(asignatura.id)
+                                setDialogoNuevaNotaAbierto(true)
+                              }}
                             >
                               <PlusCircle className="h-4 w-4 mr-2" />
                               Añadir Nota
@@ -585,8 +557,10 @@ export default function GestorAsignaturas() {
                                   min="0"
                                   max="10"
                                   step="0.01"
-                                  value={nuevaNota.valor}
-                                  onChange={(e) => setNuevaNota({ ...nuevaNota, valor: Number(e.target.value) })}
+                                  value={isNaN(nuevaNota.valor) ? "" : nuevaNota.valor} // Mostrar cadena vacía si es NaN
+                                  onChange={(e) =>
+                                    setNuevaNota({ ...nuevaNota, valor: e.target.value === "" ? NaN : Number(e.target.value) })
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
@@ -599,14 +573,16 @@ export default function GestorAsignaturas() {
                                   type="number"
                                   min="1"
                                   max="100"
-                                  value={nuevaNota.ponderacion}
-                                  onChange={(e) => setNuevaNota({ ...nuevaNota, ponderacion: Number(e.target.value) })}
+                                  value={isNaN(nuevaNota.ponderacion) ? "" : nuevaNota.ponderacion} // Mostrar cadena vacía si es NaN
+                                  onChange={(e) =>
+                                    setNuevaNota({ ...nuevaNota, ponderacion: e.target.value === "" ? NaN : Number(e.target.value) })
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
                             </div>
                             <DialogFooter>
-                              <Button onClick={añadirNota}>Añadir Nota</Button>
+                              <Button onClick={anadirNota}>Añadir Nota</Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
